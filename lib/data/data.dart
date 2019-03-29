@@ -27,39 +27,14 @@ class Data
                     case 200:
                         final String body = utf8.decode(response.bodyBytes).replaceAll(
                             "\r\n", "#");
-
-                        final RegExp regex = new RegExp(
-                            r"BEGIN:VEVENT(.*?)END:VEVENT");
-                        final Iterable<Match> events = regex.allMatches(body);
-
-                        final List<Event> aulas = [];
-                        final List<Event> avals = [];
-
-                        final now = DateTime.now();
-
-                        events.forEach((e)
-                        async
-                        {
-                            final data = e.group(0).split("#");
-                            final parsedEvent = new Event(data, now);
-
-                            if (parsedEvent.isValid())
-                            {
-                                if (parsedEvent.isAula()) aulas.add(
-                                    parsedEvent);
-                                else
-                                    avals.add(parsedEvent);
-                            }
-                        });
-
-                        await SharedPrefs.setAulas(aulas.toString());
-                        await SharedPrefs.setAvals(avals.toString());
-
-                        showMessage(context,'Informações obtidas com sucesso!');
+                        parseEvents(body);
+                        showMessage(context,'Informação obtida com sucesso!');
                         break;
+
                     case 500:
                         showMessage(context,'Número mecanográfico inválido!');
                         break;
+
                     default:
                         showMessage(context,'Falha na conectividade!');
                         break;
@@ -74,6 +49,36 @@ class Data
         });
 
         return c.future;
+    }
+
+    static parseEvents(String body) async
+    {
+        final RegExp regex = new RegExp(
+            r"BEGIN:VEVENT(.*?)END:VEVENT");
+        final Iterable<Match> events = regex.allMatches(body);
+
+        final List<Event> aulas = [];
+        final List<Event> avals = [];
+
+        final now = DateTime.now();
+
+        events.forEach((e)
+        async
+        {
+            final data = e.group(0).split("#");
+            final parsedEvent = new Event(data, now);
+
+            if (parsedEvent.isValid())
+            {
+                if (parsedEvent.isAula()) aulas.add(
+                    parsedEvent);
+                else
+                    avals.add(parsedEvent);
+            }
+        });
+
+        await SharedPrefs.setAulas(aulas.toString());
+        await SharedPrefs.setAvals(avals.toString());
     }
 
     static void showMessage(BuildContext context, String msg)
