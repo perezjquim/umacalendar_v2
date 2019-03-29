@@ -4,8 +4,9 @@ import 'package:umacalendar_v2/settings/sharedprefs.dart';
 import 'package:umacalendar_v2/data/data.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.title}) : super(key: key);
+  Home({Key key, this.title, this.theme}) : super(key: key);
   final String title;
+  final ThemeData theme;
   @override
   _HomeState createState() => _HomeState();
 }
@@ -14,6 +15,12 @@ class _HomeState extends State<Home> {
   int _currentIndex = 0;
 
   List _events = [];
+
+  static const Map<String, String> _TEXT = {
+    'AULAS': 'Aulas',
+    'AVALS': 'Avaliações',
+    'EVENTS_NOT_FOUND': 'Sem eventos'
+  };
 
   @override
   void dispose() {
@@ -87,20 +94,35 @@ class _HomeState extends State<Home> {
           ],
         ),
         body: Builder(builder: (BuildContext context) {
-          return RefreshIndicator(
-              onRefresh: () {
-                return Data.onRefresh(context);
-              },
-              child: ListView.builder(
-                  itemBuilder: _buildItem, itemCount: _events.length));
+          if (_events.length > 0) {
+            return RefreshIndicator(
+                onRefresh: () {
+                  return Data.onRefresh(context);
+                },
+                child: ListView.builder(
+                    itemBuilder: _buildItem, itemCount: _events.length));
+          } else {
+            return RefreshIndicator(
+                onRefresh: () {
+                  return Data.onRefresh(context);
+                },
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                      Icon(Icons.error),
+                      Text(_TEXT['EVENTS_NOT_FOUND'])
+                    ])));
+          }
         }),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                  icon: Icon(Icons.school), title: Text('Aulas')),
+                  icon: Icon(Icons.school), title: Text(_TEXT['AULAS'])),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.date_range), title: Text('Avaliações')),
+                  icon: Icon(Icons.date_range), title: Text(_TEXT['AVALS'])),
             ],
             onTap: (index) {
               setState(() {

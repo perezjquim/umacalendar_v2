@@ -5,6 +5,15 @@ import 'package:umacalendar_v2/data/data.dart';
 
 class Settings
 {
+    static final TextEditingController fldUser = new TextEditingController();
+    static const Map<String,String> _TEXT =
+    {
+        'NR_MEC': 'Número mecanográfico',
+        'HINT': 'Ex.: 2088819',
+        'CONFIRM': 'Confirmar',
+        'CANCEL': 'Cancelar'
+    };
+
     static void _onUserChanged(BuildContext context)
     {
         SharedPrefs.setUser(fldUser.text);
@@ -23,21 +32,19 @@ class Settings
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-                title: new Text("Número mecanográfico"),
+                title: new Text(_TEXT['NR_MEC']),
                 content: new TextField
                 (
                     controller: fldUser,
                     keyboardType: TextInputType.number,
                     autofocus: true,
-                    decoration: InputDecoration(labelText: 'Ex.: 2099919'),
+                    decoration: InputDecoration(labelText: _TEXT['HINT']),
                     textInputAction: TextInputAction.done
                 ),
                 actions: <Widget>[
-                    MaterialButton(child: Text('Confirmar'), onPressed: () { _onUserChanged(context); }),
-                    MaterialButton(child: Text('Cancelar'), onPressed: () { _onClose(context); })
+                    MaterialButton(child: Text(_TEXT['CONFIRM']), onPressed: () { _onUserChanged(context); }),
+                    MaterialButton(child: Text(_TEXT['CANCEL']), onPressed: () { _onClose(context); })
                 ],
             ));
     }
-
-    static final TextEditingController fldUser = new TextEditingController();
 }

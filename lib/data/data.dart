@@ -11,6 +11,16 @@ import 'dart:convert' show utf8;
 class Data
 {
     static const String _BASE_URL = 'http://calendar.uma.pt/';
+    static const String _REGEX = r"BEGIN:VEVENT(.*?)END:VEVENT";
+    static const Map<String,String> _TEXT =
+    {
+        'SUCCESS': 'Informação obtida com sucesso',
+        'USER_NOT_FOUND': 'Por favor introduza o número mecanográfico',
+        'INVALID_USER': 'Número mecanográfico inválido',
+        'ERROR': 'Falha na conectividade'
+    };
+    static const int _SUCCESS = 200;
+    static const int _INVALID_USER = 500;
 
     static Future<void> fetchUserInfo(BuildContext context)
     {
@@ -24,25 +34,25 @@ class Data
 
                 switch (response.statusCode)
                 {
-                    case 200:
+                    case _SUCCESS:
                         final String body = utf8.decode(response.bodyBytes).replaceAll(
                             "\r\n", "#");
                         parseEvents(body);
-                        showMessage(context,'Informação obtida com sucesso!');
+                        showMessage(context,_TEXT['SUCCESS']);
                         break;
 
-                    case 500:
-                        showMessage(context,'Número mecanográfico inválido!');
+                    case _INVALID_USER:
+                        showMessage(context,_TEXT['INVALID_USER']);
                         break;
 
                     default:
-                        showMessage(context,'Falha na conectividade!');
+                        showMessage(context,_TEXT['ERROR']);
                         break;
                 }
             }
             else
             {
-                showMessage(context,'Por favor introduza o número mecanográfico');
+                showMessage(context,_TEXT['USER_NOT_FOUND']);
                 Settings.onOpen(context);
             }
             c.complete();
@@ -53,8 +63,7 @@ class Data
 
     static parseEvents(String body) async
     {
-        final RegExp regex = new RegExp(
-            r"BEGIN:VEVENT(.*?)END:VEVENT");
+        final RegExp regex = new RegExp(_REGEX);
         final Iterable<Match> events = regex.allMatches(body);
 
         final List<Event> aulas = [];

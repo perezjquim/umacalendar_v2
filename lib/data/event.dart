@@ -70,32 +70,7 @@ class Event
         return _isAula;
     }
 
-    String getTitle()
-    {
-        return _title;
-    }
-
-    String getProf()
-    {
-        return _prof;
-    }
-
-    String getLocation()
-    {
-        return _location;
-    }
-
-    String getDate()
-    {
-        return _date;
-    }
-
-    String getTime()
-    {
-        return _time;
-    }
-
-    static String _getValue(List<String> data, int position)
+    String _getValue(List<String> data, int position)
     {
         return data[position].split(":")[1];
     }
