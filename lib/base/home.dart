@@ -97,7 +97,10 @@ class _HomeState extends State<Home> {
           if (_events.length > 0) {
             return RefreshIndicator(
                 onRefresh: () {
-                  return Data.onRefresh(context);
+                  return Data.onRefresh(context).then((_)
+                  {
+                    _prepare();
+                  });
                 },
                 child: ListView.builder(
                     itemBuilder: _buildItem, itemCount: _events.length));
