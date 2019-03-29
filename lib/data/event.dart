@@ -102,6 +102,7 @@ class Event
 
     String toString()
     {
-        return '{"title":"$_title","prof":"$_prof","location":"$_location","date":"$_date","time":"$_time","isAula":"$_isAula"}';
+        String s = '{"title":"$_title","prof":"$_prof","location":"$_location","date":"$_date","time":"$_time","isAula":"$_isAula"}';
+        return s;
     }
 }

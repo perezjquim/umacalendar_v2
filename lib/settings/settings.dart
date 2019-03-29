@@ -8,7 +8,7 @@ class Settings
     static void _onUserChanged(BuildContext context)
     {
         SharedPrefs.setUser(fldUser.text);
-        Data.onRefresh();
+        Data.onRefresh(context);
         _onClose(context);
     }
 
@@ -29,7 +29,7 @@ class Settings
                     controller: fldUser,
                     keyboardType: TextInputType.number,
                     autofocus: true,
-                    decoration: InputDecoration(labelText: 'Ex.:2099919')
+                    decoration: InputDecoration(labelText: 'Ex.: 2099919')
                 ),
                 actions: <Widget>[
                     MaterialButton(child: Text('Confirmar'), onPressed: () { _onUserChanged(context); }),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:umacalendar_v2/settings/settings.dart';
 import 'package:umacalendar_v2/settings/sharedprefs.dart';
-import 'package:umacalendar_v2/data/event.dart';
 import 'package:umacalendar_v2/data/data.dart';
 
 class Home extends StatefulWidget {
@@ -27,24 +26,23 @@ class _HomeState extends State<Home> {
     _prepare();
   }
 
-  void _prepare()
-  {
-      switch (_currentIndex) {
-          case 0:
-              SharedPrefs.getAulas().then((aulas) {
-                  setState(() {
-                      if(aulas != null) _events = Data.prepareEvents(aulas);
-                  });
-              });
-              break;
-          case 1:
-              SharedPrefs.getAvals().then((avals) {
-                  setState(() {
-                      if(avals != null) _events = Data.prepareEvents(avals);
-                  });
-              });
-              break;
-      }
+  void _prepare() {
+    switch (_currentIndex) {
+      case 0:
+        SharedPrefs.getAulas().then((aulas) {
+          setState(() {
+            if (aulas != null) _events = Data.prepareEvents(aulas);
+          });
+        });
+        break;
+      case 1:
+        SharedPrefs.getAvals().then((avals) {
+          setState(() {
+            if (avals != null) _events = Data.prepareEvents(avals);
+          });
+        });
+        break;
+    }
   }
 
   Widget _buildItem(BuildContext ctxt, int index) {
@@ -88,12 +86,14 @@ class _HomeState extends State<Home> {
                 }),
           ],
         ),
-        body: RefreshIndicator(
-            onRefresh: () {
-              return Data.onRefresh();
-            },
-            child: ListView.builder(
-                itemBuilder: _buildItem, itemCount: _events.length)),
+        body: Builder(builder: (BuildContext context) {
+          return RefreshIndicator(
+              onRefresh: () {
+                return Data.onRefresh(context);
+              },
+              child: ListView.builder(
+                  itemBuilder: _buildItem, itemCount: _events.length));
+        }),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             items: <BottomNavigationBarItem>[

@@ -1,16 +1,18 @@
 import 'package:umacalendar_v2/settings/sharedprefs.dart';
+import 'package:umacalendar_v2/settings/settings.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:core';
 import 'dart:convert' as JSON;
 import 'package:umacalendar_v2/data/event.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:convert' show utf8;
 
 class Data
 {
     static const String _BASE_URL = 'http://calendar.uma.pt/';
 
-    static Future<void> fetchUserInfo()
+    static Future<void> fetchUserInfo(BuildContext context)
     {
         Completer c = new Completer();
 
@@ -20,37 +22,61 @@ class Data
             {
                 final response = await http.get(_BASE_URL + user);
 
-                if(response.statusCode == 200)
+                switch (response.statusCode)
                 {
-                    final String body = response.body.replaceAll("\r\n", "#");
+                    case 200:
+                        final String body = utf8.decode(response.bodyBytes).replaceAll(
+                            "\r\n", "#");
 
-                    final RegExp regex = new RegExp(r"BEGIN:VEVENT(.*?)END:VEVENT");
-                    final Iterable<Match> events = regex.allMatches(body);
+                        final RegExp regex = new RegExp(
+                            r"BEGIN:VEVENT(.*?)END:VEVENT");
+                        final Iterable<Match> events = regex.allMatches(body);
 
-                    final List<Event> aulas = [];
-                    final List<Event> avals = [];
+                        final List<Event> aulas = [];
+                        final List<Event> avals = [];
 
-                    final now = DateTime.now();
+                        final now = DateTime.now();
 
-                    events.forEach((e) async
-                    {
-                        final data = e.group(0).split("#");
-                        final parsedEvent = new Event(data,now);
-
-                        if(parsedEvent.isValid())
+                        events.forEach((e)
+                        async
                         {
-                            if(parsedEvent.isAula()) aulas.add(parsedEvent);
-                            else avals.add(parsedEvent);
-                        }
-                    });
+                            final data = e.group(0).split("#");
+                            final parsedEvent = new Event(data, now);
 
-                    await SharedPrefs.setAulas(aulas.toString());
-                    await SharedPrefs.setAvals(avals.toString());
+                            if (parsedEvent.isValid())
+                            {
+                                if (parsedEvent.isAula()) aulas.add(
+                                    parsedEvent);
+                                else
+                                    avals.add(parsedEvent);
+                            }
+                        });
+
+                        await SharedPrefs.setAulas(aulas.toString());
+                        await SharedPrefs.setAvals(avals.toString());
+
+                        final SnackBar s = SnackBar(
+                            content: Text('Informação obtida com sucesso!'));
+                        Scaffold.of(context).showSnackBar(s);
+                        break;
+                    case 500:
+                        final SnackBar s = SnackBar(
+                            content: Text('Número mecanográfico inválido!'));
+                        Scaffold.of(context).showSnackBar(s);
+                        break;
+                    default:
+                        final SnackBar s = SnackBar(
+                            content: Text('Falha na conectividade!'));
+                        Scaffold.of(context).showSnackBar(s);
+                        break;
                 }
-                else
-                {
-                    // Número inválido
-                }
+            }
+            else
+            {
+                final SnackBar s = SnackBar(
+                    content: Text('Por favor introduza o número mecanográfico'));
+                Scaffold.of(context).showSnackBar(s);
+                Settings.onOpen(context);
             }
             c.complete();
         });
@@ -60,11 +86,12 @@ class Data
 
     static List prepareEvents(String data)
     {
+        print(data);
         return JSON.jsonDecode(data);
     }
 
-    static Future<void> onRefresh() async
+    static Future<void> onRefresh(BuildContext context) async
     {
-        return fetchUserInfo();
+        return fetchUserInfo(context);
     }
 }
