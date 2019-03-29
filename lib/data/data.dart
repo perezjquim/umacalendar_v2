@@ -55,27 +55,19 @@ class Data
                         await SharedPrefs.setAulas(aulas.toString());
                         await SharedPrefs.setAvals(avals.toString());
 
-                        final SnackBar s = SnackBar(
-                            content: Text('Informação obtida com sucesso!'));
-                        Scaffold.of(context).showSnackBar(s);
+                        showMessage(context,'Informações obtidas com sucesso!');
                         break;
                     case 500:
-                        final SnackBar s = SnackBar(
-                            content: Text('Número mecanográfico inválido!'));
-                        Scaffold.of(context).showSnackBar(s);
+                        showMessage(context,'Número mecanográfico inválido!');
                         break;
                     default:
-                        final SnackBar s = SnackBar(
-                            content: Text('Falha na conectividade!'));
-                        Scaffold.of(context).showSnackBar(s);
+                        showMessage(context,'Falha na conectividade!');
                         break;
                 }
             }
             else
             {
-                final SnackBar s = SnackBar(
-                    content: Text('Por favor introduza o número mecanográfico'));
-                Scaffold.of(context).showSnackBar(s);
+                showMessage(context,'Por favor introduza o número mecanográfico');
                 Settings.onOpen(context);
             }
             c.complete();
@@ -84,9 +76,15 @@ class Data
         return c.future;
     }
 
+    static void showMessage(BuildContext context, String msg)
+    {
+        final SnackBar s = SnackBar(
+            content: Text(msg));
+        Scaffold.of(context).showSnackBar(s);
+    }
+
     static List prepareEvents(String data)
     {
-        print(data);
         return JSON.jsonDecode(data);
     }
 

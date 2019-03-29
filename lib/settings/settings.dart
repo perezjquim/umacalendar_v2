@@ -29,7 +29,8 @@ class Settings
                     controller: fldUser,
                     keyboardType: TextInputType.number,
                     autofocus: true,
-                    decoration: InputDecoration(labelText: 'Ex.: 2099919')
+                    decoration: InputDecoration(labelText: 'Ex.: 2099919'),
+                    textInputAction: TextInputAction.done
                 ),
                 actions: <Widget>[
                     MaterialButton(child: Text('Confirmar'), onPressed: () { _onUserChanged(context); }),

@@ -31,14 +31,14 @@ class Event
             String month = dateStart.month.toString().padLeft(2, '0');
             String year = dateStart.year.toString();
 
-            _date ="${day}/${month}/${year}";
+            _date = "$day/$month/$year";
 
             String hourStart = dateStart.hour.toString().padLeft(2, '0');
             String minStart = dateStart.minute.toString().padLeft(2, '0');
             String hourEnd = dateEnd.hour.toString().padLeft(2, '0');
             String minEnd = dateEnd.minute.toString().padLeft(2, '0');
 
-            _time = "${hourStart}:${minStart} - ${hourEnd}:${minEnd}";
+            _time = "$hourStart:$minStart - $hourEnd:$minEnd";
         }
     }
 
