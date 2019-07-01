@@ -72,7 +72,8 @@ class Event
 
     String _getValue(List<String> data, int position)
     {
-        return data[position].split(":")[1];
+        var startIndex = data[position].indexOf(":");
+        return data[position].substring(startIndex + 1);
     }
 
     String toString()

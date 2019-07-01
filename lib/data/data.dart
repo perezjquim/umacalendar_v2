@@ -53,7 +53,7 @@ class Data
             else
             {
                 showMessage(context,_TEXT['USER_NOT_FOUND']);
-                Settings.onOpen(context);
+                Settings.open(context);
             }
             c.complete();
         });
@@ -104,6 +104,6 @@ class Data
 
     static Future<void> onRefresh(BuildContext context) async
     {
-        return fetchUserInfo(context);
+        return await fetchUserInfo(context);
     }
 }
